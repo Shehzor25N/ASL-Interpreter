@@ -19,7 +19,10 @@ export class Tab1Page implements OnInit {
   gesture: string = ' RESEARCH PAPER, YOU LIKE WRITE? ';
   isListening: boolean = false;
   recognizedText: string = '';
+  isConnected: boolean = false; // Connection status
+  receivedText: string = ''; // Variable to hold the text received from Arduino
   translate: string = '';
+  
   deviceId: string = ''; // Store the device ID after connecting
   SERVICE_UUID = '0000180d-0000-1000-8000-00805f9b34fb'; // Example: '0000180d-0000-1000-8000-00805f9b34fb'
   CHARACTERISTIC_UUID = '00002a37-0000-1000-8000-00805f9b34fb'; // Example: '00002a37-0000-1000-8000-00805f9b34fb'
@@ -42,25 +45,70 @@ export class Tab1Page implements OnInit {
 
   async initializeBLE() {
     try {
-      // Initialize Bluetooth
       await BleClient.initialize();
-
       console.log('Bluetooth initialized.');
+    } catch (error) {
+      console.error('Error initializing BLE:', error);
+    }
+  }
 
-      // Request to scan and select a device
+  
+  // Function to connect to the Arduino BLE device
+  async connectToDevice() {
+    try {
       const device = await BleClient.requestDevice({
         services: [this.SERVICE_UUID],
       });
 
       console.log('Device selected:', device);
-
-      // Connect to the selected device
       await BleClient.connect(device.deviceId);
       this.deviceId = device.deviceId;
+      this.isConnected = true;
 
       console.log('Connected to device:', this.deviceId);
+
+      // Start receiving notifications
+      await this.startReceivingNotifications();
     } catch (error) {
-      console.error('Error initializing BLE:', error);
+      console.error('Error connecting to device:', error);
+      this.isConnected = false;
+    }
+  }
+
+  async startReceivingNotifications() {
+    try {
+      await BleClient.startNotifications(this.deviceId, this.SERVICE_UUID, this.CHARACTERISTIC_UUID, (value) => {
+        // Convert DataView to String
+        const decoder = new TextDecoder('utf-8');
+        const receivedString = decoder.decode(value);
+  
+        // Store received text in the component variable
+        this.receivedText = receivedString;
+        console.log('Received text from Arduino:', this.receivedText);
+      });
+  
+      console.log('Started receiving notifications from Arduino.');
+    } catch (error) {
+      console.error('Error starting notifications:', error);
+    }
+  }
+  
+  async disconnectDevice() {
+    try {
+      await BleClient.disconnect(this.deviceId);
+      this.isConnected = false;
+      console.log('Disconnected from device:', this.deviceId);
+    } catch (error) {
+      console.error('Error disconnecting from device:', error);
+    }
+  }
+
+  async stopReceivingNotifications() {
+    try {
+      await BleClient.stopNotifications(this.deviceId, this.SERVICE_UUID, this.CHARACTERISTIC_UUID);
+      console.log('Stopped receiving notifications from Arduino.');
+    } catch (error) {
+      console.error('Error stopping notifications:', error);
     }
   }
 
