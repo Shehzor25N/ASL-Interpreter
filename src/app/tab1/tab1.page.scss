@@ -1,0 +1,198 @@
+ion-header {
+  ion-title {
+    display: flex;
+    align-items: center;
+
+    ion-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.asl-interpreter-content {
+  --background: #222;
+  --ion-background-color: #222;
+  --ion-text-color: #fff;
+
+  .control-card {
+    --background: #333;
+    --color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+  }
+
+  .control-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    ion-card-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    ion-card-subtitle {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .led-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: green;
+    margin-left: 5px;
+  }
+
+  .button-col {
+    display: flex;
+    justify-content: center;
+    margin-top: -10px;
+  }
+
+  .animated-button {
+    width: 100px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 25px;
+    --color: #fff;
+  }
+
+  .start-button {
+    --background: #38d39f;
+  }
+
+  .stop-button {
+    --background: #f0533d;
+  }
+
+  .gesture-card {
+    --background: #333;
+    --color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    height: 300px; /* Increased height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    ion-card-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+
+  .gesture-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Adjust height to center image */
+
+    .gesture-image {
+      width: 150px;
+      height: 150px;
+    }
+  }
+
+  .interpreted-text-card {
+    --background: #333;
+    --color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 16px;
+
+    ion-card-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .interpreted-text-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+    }
+
+    .interpreted-text-result {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+
+  .speak-button {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    width: 150px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 25px;
+    --background: #007bff;
+    --color: #fff;
+  }
+
+  .recognized-text-card {
+    --background: #333;
+    --color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 16px;
+
+    ion-card-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .recognized-text-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+    }
+
+    .recognized-text-result {
+      font-size: 1.2em;
+    }
+  }
+
+  .listening-message {
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+
+.custom-segment {
+  --indicator-color: #6200ee;
+  --button-color: #fff;
+  --button-color-checked: #fff;
+  --background: #ccc;
+  --background-checked: #6200ee;
+  --border-radius: 8px;
+  margin: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-segment .segment-button {
+  --border-radius: 8px;
+}
+
+.custom-segment .segment-button-checked {
+  --background: #6200ee;
+  color: #fff;
+}
+
+.custom-segment .segment-button:not(.segment-button-checked) {
+  --background: #ccc;
+  color: #000;
+}
+
+  
