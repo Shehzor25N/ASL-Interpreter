@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone  } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonCardTitle, IonCard, IonCardHeader, IonToast, IonButton, IonCardContent, IonIcon, IonCol, IonGrid, IonRow, IonCardSubtitle, AlertController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
@@ -17,13 +17,13 @@ import Groq from 'groq-sdk';
 export class Tab1Page implements OnInit {
   gesture: string = ' RESEARCH PAPER, YOU LIKE WRITE? ';
   isListening: boolean = false;
-  recognizedText: string = 'Yes I do';
+  recognizedText: string = '';
   translate: string = '';
 
   private groq: any;
   private apiKey: string = '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'; // Replace with your actual API key
 
-  constructor(private alertController: AlertController) {
+  constructor(private alertController: AlertController, private ngZone: NgZone) {
     SpeechRecognition.requestPermissions();
     this.groq = new Groq({ apiKey: this.apiKey, dangerouslyAllowBrowser: true });
   }
@@ -75,14 +75,17 @@ export class Tab1Page implements OnInit {
 
     // Listen for partial results
     SpeechRecognition.addListener('partialResults', (data: any) => {
-      console.log('partialResults received:', data.value);
-      if (data.value && data.value.length > 0) {
-        this.recognizedText = data.value[0];
-        this.gesture = data.value[0];
-        this.translateASLGloss(); // Translate the recognized text
-      }
+      this.ngZone.run(() => {
+        console.log('partialResults received:', data.value);
+        if (data.value && data.value.length > 0) {
+          this.recognizedText = data.value[0];
+          this.gesture = data.value[0];
+          this.translateASLGloss(); // Translate the recognized text
+        }
+      });
     });
-
+    
+    
     setTimeout(() => {
       this.stopListening();
     }, 5000);
@@ -95,8 +98,10 @@ export class Tab1Page implements OnInit {
       this.isListening = false;
     } else {
       this.showAlert('Speech recognition is not supported on the web.');
+      this.isListening = false; // Add this line
     }
   }
+  
 
   getGestureImage(gesture: string): string {
     switch (gesture.toUpperCase()) {

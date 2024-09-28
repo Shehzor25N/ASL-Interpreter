@@ -94,22 +94,21 @@
 
   <!-- Recognized Text Card -->
   <ion-card class="interpreted-text-card">
-    <ion-card-header>
-      <ion-card-title class="ion-text-center ion-text-bold">Recognized Text from Speaker</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div id="interpreted-text-container" class="interpreted-text-container">
+  <ion-card-header>
+    <ion-card-title class="ion-text-center ion-text-bold">Recognized Text from Speaker</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <div id="interpreted-text-container" class="interpreted-text-container">
+      <!-- Show 'Listening...' if listening, otherwise show the recognized text -->
       <span class="interpreted-text-result">{{ isListening ? 'Listening...' : recognizedText }}</span>
-      </div>
-      <ion-card-subtitle>Sent to Glove Screen! <span class="led-indicator connected"></span></ion-card-subtitle>
-    </ion-card-content>
-    
-  </ion-card>
+    </div>
+    <ion-card-subtitle>Sent to Glove Screen! <span class="led-indicator connected"></span></ion-card-subtitle>
+  </ion-card-content>
+</ion-card>
 
- 
-  <div class="listening-message">
-    {{ isListening ? 'Listening...' : '' }}
-  </div>
+<div class="listening-message">
+  {{ isListening ? 'Listening...' : '' }}
+</div>
 
 
 
