@@ -75,6 +75,16 @@ export class Tab1Page implements OnInit {
     }
   }
 
+  async disconnectDevice() {
+    try {
+      await BleClient.disconnect(this.deviceId);
+      this.isConnected = false;
+      console.log('Disconnected from device:', this.deviceId);
+    } catch (error) {
+      console.error('Error disconnecting from device:', error);
+    }
+  }
+
   async startReceivingNotifications() {
     try {
       await BleClient.startNotifications(this.deviceId, this.SERVICE_UUID, this.CHARACTERISTIC_UUID, (value) => {
@@ -93,15 +103,6 @@ export class Tab1Page implements OnInit {
     }
   }
   
-  async disconnectDevice() {
-    try {
-      await BleClient.disconnect(this.deviceId);
-      this.isConnected = false;
-      console.log('Disconnected from device:', this.deviceId);
-    } catch (error) {
-      console.error('Error disconnecting from device:', error);
-    }
-  }
 
   async stopReceivingNotifications() {
     try {
