@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonCardTitle, IonCard, IonCardHeader, IonToast, IonButton, IonCardContent, IonIcon, IonCol, IonGrid, IonRow, IonCardSubtitle, AlertController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
@@ -6,6 +6,7 @@ import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 import { Capacitor } from '@capacitor/core';
 import Groq from 'groq-sdk';
+import { BleClient, numbersToDataView } from '@capacitor-community/bluetooth-le';
 
 @Component({
   selector: 'app-tab1',
@@ -19,17 +20,68 @@ export class Tab1Page implements OnInit {
   isListening: boolean = false;
   recognizedText: string = '';
   translate: string = '';
+  deviceId: string = ''; // Store the device ID after connecting
+  SERVICE_UUID = '0000180d-0000-1000-8000-00805f9b34fb'; // Example: '0000180d-0000-1000-8000-00805f9b34fb'
+  CHARACTERISTIC_UUID = '00002a37-0000-1000-8000-00805f9b34fb'; // Example: '00002a37-0000-1000-8000-00805f9b34fb'
 
+
+
+  
   private groq: any;
-  private apiKey: string = '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'; // Replace with your actual API key
+  private apiKey: string = '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'; // Replace with your actual API key
 
-  constructor(private alertController: AlertController, private ngZone: NgZone) {
+  constructor(private alertController: AlertController) {
     SpeechRecognition.requestPermissions();
     this.groq = new Groq({ apiKey: this.apiKey, dangerouslyAllowBrowser: true });
   }
 
   ngOnInit() {
     this.translateASLGloss();
+    this.initializeBLE();
+  }
+
+  async initializeBLE() {
+    try {
+      // Initialize Bluetooth
+      await BleClient.initialize();
+
+      console.log('Bluetooth initialized.');
+
+      // Request to scan and select a device
+      const device = await BleClient.requestDevice({
+        services: [this.SERVICE_UUID],
+      });
+
+      console.log('Device selected:', device);
+
+      // Connect to the selected device
+      await BleClient.connect(device.deviceId);
+      this.deviceId = device.deviceId;
+
+      console.log('Connected to device:', this.deviceId);
+    } catch (error) {
+      console.error('Error initializing BLE:', error);
+    }
+  }
+
+  async sendRecognizedText() {
+    try {
+      if (!this.deviceId || !this.recognizedText) {
+        console.error('Device not connected or recognized text is empty.');
+        return;
+      }
+
+      // Convert recognized text to DataView for BLE transmission
+      const textArray = Array.from(this.recognizedText, (c) => c.charCodeAt(0));
+      const dataView = numbersToDataView(textArray);
+
+      // Write the recognized text to the BLE characteristic
+      await BleClient.write(this.deviceId, this.SERVICE_UUID, this.CHARACTERISTIC_UUID, dataView);
+
+      console.log('Sent recognized text:', this.recognizedText);
+    } catch (error) {
+      console.error('Error sending recognized text:', error);
+    }
   }
 
   async speak() {
@@ -62,46 +114,42 @@ export class Tab1Page implements OnInit {
         return;
       }
     }
-
+  
     this.isListening = true;
     this.recognizedText = ''; // Clear previous text
-
+    console.log('Speech recognition started');
+  
+    // Start listening
     SpeechRecognition.start({
       language: 'en-US',
-      maxResults: 1,
-      prompt: 'Say something',
-      partialResults: true,
+      maxResults: 2,
+      prompt: 'Say something', // Prompt message (Android only)
+      partialResults: true, // Return partial results
+      popup: false, // Popup window (Android only)
     });
+     
 
     // Listen for partial results
     SpeechRecognition.addListener('partialResults', (data: any) => {
-      this.ngZone.run(() => {
-        console.log('partialResults received:', data.value);
-        if (data.value && data.value.length > 0) {
-          this.recognizedText = data.value[0];
-          this.gesture = data.value[0];
-          this.translateASLGloss(); // Translate the recognized text
-        }
-      });
+      console.log('partialResults was fired:', data.matches);
+      if (data.matches && data.matches.length > 0) {
+        this.recognizedText = data.matches[0];
+
+        console.log('Recognized text:', this.recognizedText);
+      }
     });
-    
-    
+
     setTimeout(() => {
       this.stopListening();
     }, 5000);
   }
 
   async stopListening() {
-    if (Capacitor.getPlatform() !== 'web') {
-      await SpeechRecognition.stop();
-      SpeechRecognition.removeAllListeners();
-      this.isListening = false;
-    } else {
-      this.showAlert('Speech recognition is not supported on the web.');
-      this.isListening = false; // Add this line
-    }
+    await SpeechRecognition.stop();
+    SpeechRecognition.removeAllListeners();
+    this.isListening = false;
+    console.log('Speech recognition stopped');
   }
-  
 
   getGestureImage(gesture: string): string {
     switch (gesture.toUpperCase()) {
