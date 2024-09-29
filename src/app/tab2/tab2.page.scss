@@ -1,0 +1,23 @@
+ion-input {
+    --background: #ffffff;    /* White background for the input fields */
+    --color: #000000;         /* Black text color for input */
+    --padding-start: 10px;    /* Add padding inside the input field */
+    border-radius: 8px;       /* Rounded corners for a cleaner look */
+  }
+  
+  ion-card-header {
+    background-color: #333;   /* Dark card header background */
+    color: white;             /* White text for headers */
+  }
+  
+  ion-card-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  ion-button {
+    margin-top: 20px;
+    --background: #007bff;    /* Customize the button color */
+    --color: white;           /* Button text color */
+  }
+  
