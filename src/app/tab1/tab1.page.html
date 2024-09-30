@@ -28,22 +28,6 @@
       </ion-col>
     </ion-row>
 
-    <ion-row>
-      <ion-col size="6" class="button-col">
-        <ion-button expand="full" color="primary" (click)="connectToDevice()" [disabled]="isConnected">
-          Connect
-        </ion-button>
-      </ion-col>
-      <ion-col size="6" class="button-col">
-        <ion-button expand="full" color="danger" (click)="disconnectDevice()" [disabled]="!isConnected">
-          Disconnect
-        </ion-button>
-      </ion-col>
-    </ion-row>
-
-    
-
-    
 
   
 
@@ -62,6 +46,8 @@
 
     <ion-button class="speak-button" (click)="speak()">Play Sentence</ion-button>
 
+    
+   
   </ion-grid>
 
   <ion-card class="gesture-card">
@@ -125,7 +111,6 @@
   </ion-card-content>
 </ion-card>
 
-
 <ion-card>
   <ion-card-header>
     <ion-card-title>Bluetooth Connection</ion-card-title>
@@ -133,15 +118,13 @@
   <ion-card-content>
     <p>Status: {{ isConnected ? 'Connected' : 'Disconnected' }}</p>
     <ion-button expand="full" color="primary" (click)="connectToDevice()" [disabled]="isConnected">
-      Connect to Interpreter Glove
+      Connect to InterpreterGlove
     </ion-button>
     <ion-button expand="full" color="danger" (click)="disconnectDevice()" [disabled]="!isConnected">
       Disconnect
     </ion-button>
   </ion-card-content>
-</ion-card>     
-
-
+</ion-card>
 
 <!-- Display any received text -->
 <ion-card *ngIf="receivedText">

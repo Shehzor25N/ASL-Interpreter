@@ -1,4 +1,4 @@
-package ionic.signionic;
+package ionic.ASL;
 
 import com.getcapacitor.BridgeActivity;
 

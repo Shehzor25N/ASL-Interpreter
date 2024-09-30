@@ -1,17 +1,89 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
+    <ion-title>Enter Sensor Data</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
+      <ion-title size="large">Sensor Data Form</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <form [formGroup]="sensorForm" (ngSubmit)="submitForm()">
+    
+    <!-- Flex Sensor Inputs -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Flex Sensor Inputs</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-input type="number" placeholder="Flex 1" formControlName="flex_1" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" placeholder="Flex 2" formControlName="flex_2" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" placeholder="Flex 3" formControlName="flex_3" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" placeholder="Flex 4" formControlName="flex_4" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" placeholder="Flex 5" formControlName="flex_5" required></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Gyroscope Inputs -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Gyroscope Inputs</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-input type="number" placeholder="GYRx" formControlName="GYRx" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" placeholder="GYRy" formControlName="GYRy" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" placeholder="GYRz" formControlName="GYRz" required></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Accelerometer Inputs -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Accelerometer Inputs</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-input type="number" placeholder="ACCx" formControlName="ACCx" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" placeholder="ACCy" formControlName="ACCy" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" placeholder="ACCz" formControlName="ACCz" required></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Submit Button -->
+    <ion-button expand="full" type="submit" [disabled]="!sensorForm.valid">Submit Data</ion-button>
+  </form>
+
+  <!-- Prediction Result -->
+  <ion-card *ngIf="predictionResult">
+    <ion-card-header>
+      <ion-card-title>Prediction Result</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-label>{{ predictionResult }}</ion-label>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
