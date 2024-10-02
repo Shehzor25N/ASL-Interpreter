@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonCardTitle, IonCard, IonCardHeader, IonToast, IonButton, IonCardContent, IonIcon, IonCol, IonGrid, IonRow, IonCardSubtitle, AlertController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
@@ -22,6 +22,8 @@ export class Tab1Page implements OnInit {
   isConnected: boolean = false; // Connection status
   receivedText: string = ''; // Variable to hold the text received from Arduino
   translate: string = '';
+  parsedReceivedData: number[] = [];  // Store parsed uint16_t values
+
   
   deviceId: string = ''; // Store the device ID after connecting
   SERVICE_UUID = '0000180d-0000-1000-8000-00805f9b34fb'; // Example: '0000180d-0000-1000-8000-00805f9b34fb'
@@ -33,7 +35,7 @@ export class Tab1Page implements OnInit {
   private groq: any;
   private apiKey: string = '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'; // Replace with your actual API key
 
-  constructor(private alertController: AlertController) {
+  constructor(private alertController: AlertController, private cd: ChangeDetectorRef) {
     SpeechRecognition.requestPermissions();
     this.groq = new Groq({ apiKey: this.apiKey, dangerouslyAllowBrowser: true });
   }
@@ -88,20 +90,39 @@ export class Tab1Page implements OnInit {
   async startReceivingNotifications() {
     try {
       await BleClient.startNotifications(this.deviceId, this.SERVICE_UUID, this.CHARACTERISTIC_UUID, (value) => {
-        // Convert DataView to String
-        const decoder = new TextDecoder('utf-8');
-        const receivedString = decoder.decode(value);
-  
-        // Store received text in the component variable
-        this.receivedText = receivedString;
-        console.log('Received text from Arduino:', this.receivedText);
+        // Parse the incoming DataView (BLE data as an array of uint8_t)
+        const dataView = new DataView(value.buffer);
+        const dataArray = [];
+
+        // Loop through the DataView to extract int16_t values (each 2 bytes)
+        for (let i = 0; i < dataView.byteLength; i += 2) {
+          const int16Value = dataView.getInt16(i, true); // true for little-endian, assuming ESP32 uses little-endian
+          dataArray.push(int16Value);
+        }
+
+        // Store the array in the component variable for use
+        this.receivedText = JSON.stringify(dataArray);  // Convert the array to a JSON string for display
+        this.parsedReceivedData = dataArray;  // Store the parsed int16_t data for further use
+
+        console.log('Received int16 data array from ESP32:', dataArray);
+
+        // Trigger change detection manually to update the UI
+        this.cd.detectChanges();
       });
-  
-      console.log('Started receiving notifications from Arduino.');
+
+      console.log('Started receiving notifications from ESP32.');
     } catch (error) {
       console.error('Error starting notifications:', error);
     }
   }
+
+  // Function to process received data (optional)
+  processReceivedData(dataArray: number[]) {
+    // Here you can do something with the received data, e.g., update the UI
+    console.log("Processing received data:", dataArray);
+  }
+
+  
   
 
   async stopReceivingNotifications() {

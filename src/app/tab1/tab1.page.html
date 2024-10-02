@@ -126,15 +126,27 @@
   </ion-card-content>
 </ion-card>
 
-<!-- Display any received text -->
-<ion-card *ngIf="receivedText">
+
+
+
+
+<ion-card class="interpreted-text-card">
   <ion-card-header>
-    <ion-card-title>Received Data</ion-card-title>
+    <ion-card-title class="ion-text-center ion-text-bold">Received Data</ion-card-title>
   </ion-card-header>
   <ion-card-content>
-    <p>{{ receivedText }}</p>
+    <!-- Display raw received data, or a placeholder if no data has been received yet -->
+    <p *ngIf="receivedText; else noData">{{ receivedText }}</p> <!-- Shows the raw received data -->
+    <ng-template #noData><p>No data received yet.</p></ng-template>
+
+    <!-- Loop through and display each parsed uint16_t value -->
+    <ul *ngIf="parsedReceivedData.length > 0; else noParsedData">
+      <li *ngFor="let item of parsedReceivedData">{{ item }}</li>
+    </ul>
+    <ng-template #noParsedData><p>No parsed data available.</p></ng-template>
   </ion-card-content>
 </ion-card>
+
 
 <!-- Display any received text -->
 <ion-card *ngIf="receivedText">
