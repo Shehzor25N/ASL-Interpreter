@@ -1,13 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "ionic.ASL"
-    compileSdk rootProject.ext.compileSdkVersion
-    defaultConfig {
+
+  compileSdk 34
+  namespace "ionic.ASL"
+  compileSdkVersion
+
+  defaultConfig {
         applicationId "ionic.ASL"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+    minSdk 24
+    targetSdkVersion targetSdkVersion
+    versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
@@ -40,6 +43,11 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+  // OkHttp dependencies
+  implementation 'com.squareup.okhttp3:okhttp:4.10.0'  // Latest OkHttp version
+  implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'  // For logging network requests (optional)
+
+  // Other existing dependencies...
 }
 
 apply from: 'capacitor.build.gradle'

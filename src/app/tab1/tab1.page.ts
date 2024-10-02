@@ -7,6 +7,7 @@ import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 import { Capacitor } from '@capacitor/core';
 import Groq from 'groq-sdk';
 import { BleClient, numbersToDataView } from '@capacitor-community/bluetooth-le';
+import { BleDataService } from '../ble-data.service';  // Import the service
 
 @Component({
   selector: 'app-tab1',
@@ -35,7 +36,7 @@ export class Tab1Page implements OnInit {
   private groq: any;
   private apiKey: string = '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'; // Replace with your actual API key
 
-  constructor(private alertController: AlertController, private cd: ChangeDetectorRef) {
+  constructor(private alertController: AlertController, private cd: ChangeDetectorRef, private bleDataService: BleDataService) {
     SpeechRecognition.requestPermissions();
     this.groq = new Groq({ apiKey: this.apiKey, dangerouslyAllowBrowser: true });
   }
@@ -100,14 +101,11 @@ export class Tab1Page implements OnInit {
           dataArray.push(int16Value);
         }
 
-        // Store the array in the component variable for use
-        this.receivedText = JSON.stringify(dataArray);  // Convert the array to a JSON string for display
-        this.parsedReceivedData = dataArray;  // Store the parsed int16_t data for further use
+        // Convert the array to a JSON string for display and update service
+        const receivedText = JSON.stringify(dataArray);
+        this.bleDataService.updateReceivedText(receivedText);  // Update the shared service
 
         console.log('Received int16 data array from ESP32:', dataArray);
-
-        // Trigger change detection manually to update the UI
-        this.cd.detectChanges();
       });
 
       console.log('Started receiving notifications from ESP32.');

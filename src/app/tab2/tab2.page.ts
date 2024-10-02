@@ -14,42 +14,45 @@ import { ReactiveFormsModule } from '@angular/forms';  // Use ReactiveFormsModul
   imports: [HttpClientModule, IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class Tab2Page {
-  sensorForm: FormGroup;  // Declare the form
+  sensorForm: FormGroup;  // Define the form group
+  predictionResult: string | null = null;  // Variable to store the prediction result
 
-  predictionResult: string | null = null;
-
-  constructor(private http: HttpClient, private formBuilder: FormBuilder) {
-    // Initialize the form with FormBuilder
+  constructor(private formBuilder: FormBuilder, private http: HttpClient) {
+    // Initialize the form with default values
     this.sensorForm = this.formBuilder.group({
-      flex_1: [null, Validators.required],
-      flex_2: [null, Validators.required],
-      flex_3: [null, Validators.required],
-      flex_4: [null, Validators.required],
-      flex_5: [null, Validators.required],
-      GYRx: [null, Validators.required],
-      GYRy: [null, Validators.required],
-      GYRz: [null, Validators.required],
-      ACCx: [null, Validators.required],
-      ACCy: [null, Validators.required],
-      ACCz: [null, Validators.required]
-    });
+      flex_1: [20, Validators.required],   // Set default value to 20
+      flex_2: [-19, Validators.required],  // Set default value to -19
+      flex_3: [63, Validators.required],   // Set default value to 63
+      flex_4: [59, Validators.required],   // Set default value to 59
+      flex_5: [42, Validators.required],   // Set default value to 42
+      GYRx: [-1, Validators.required],     // Set default value to -1
+      GYRy: [1, Validators.required],      // Set default value to 1
+      GYRz: [0, Validators.required],      // Set default value to 0
+      ACCx: [956, Validators.required],    // Set default value to 956
+      ACCy: [1516, Validators.required],   // Set default value to 1516
+      ACCz: [885, Validators.required]     // Set default value to 885
+    }); 
   }
 
-  // Function to submit form and make API call
+  // Method to submit the form data
   submitForm() {
     if (this.sensorForm.valid) {
-      const inputData = Object.values(this.sensorForm.value);
+      const formData = this.sensorForm.value;
 
-      const apiUrl = 'http://100.101.248.5:5000/predict';  // Flask API endpoint
+      // API URL for the Flask backend
+      const apiUrl = 'http://100.101.248.5:5000/predict';  // Replace with your actual Flask API URL
 
-      this.http.post(apiUrl, { data: inputData }).subscribe(
+      // Send the form data via POST request to Flask API
+      this.http.post(apiUrl, { data: Object.values(formData) }).subscribe(
         (response: any) => {
+          // Update the prediction result with the returned value
           this.predictionResult = response.prediction;
           console.log('Prediction Result:', this.predictionResult);
         },
         (error) => {
+          // Handle the error
           console.error('Error:', error);
-          this.predictionResult = 'No prediction available';
+          this.predictionResult = 'Error fetching prediction';
         }
       );
     }
