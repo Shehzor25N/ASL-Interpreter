@@ -244,7 +244,8 @@ export class Tab1Page implements OnInit {
     }
   }
 
-  async translateASLGloss() {
+  
+  async translateASLGloss() { // Function to translate ASL gloss to English
     console.log('Gesture to translate:', this.gesture); // Verify the gesture value
     const content = `Translate the following ASL gloss into English: ${this.gesture}. And do not add more than that. Remove quotation marks. Be simple and clear. Only give the translated text.`;
     try {
