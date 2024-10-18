@@ -8,6 +8,7 @@ import { Capacitor } from '@capacitor/core';
 import Groq from 'groq-sdk';
 import { BleClient, numbersToDataView } from '@capacitor-community/bluetooth-le';
 import { BleDataService } from '../ble-data.service';  // Import the service
+import { EventEmitter } from 'events';
 
 @Component({
   selector: 'app-tab1',
@@ -35,11 +36,20 @@ export class Tab1Page implements OnInit {
   
   private groq: any;
   private apiKey: string = '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'; // Replace with your actual API key
+  private sensorDataEmitter = new EventEmitter();
 
   constructor(private alertController: AlertController, private cd: ChangeDetectorRef, private bleDataService: BleDataService) {
     SpeechRecognition.requestPermissions();
     this.groq = new Groq({ apiKey: this.apiKey, dangerouslyAllowBrowser: true });
+
+    this.sensorDataEmitter.on('buttonSignal', () => {
+      this.startListening();
+    });
   }
+
+  // Set up an event listener for the button signal
+  
+
 
   ngOnInit() {
     this.translateASLGloss();
@@ -78,6 +88,8 @@ export class Tab1Page implements OnInit {
     }
   }
 
+  
+ 
   async disconnectDevice() {
     try {
       await BleClient.disconnect(this.deviceId);
@@ -94,21 +106,22 @@ export class Tab1Page implements OnInit {
         // Parse the incoming DataView (BLE data as an array of uint8_t)
         const dataView = new DataView(value.buffer);
         const dataArray = [];
-
+  
         // Loop through the DataView to extract int16_t values (each 2 bytes)
         for (let i = 0; i < dataView.byteLength; i += 2) {
           const int16Value = dataView.getInt16(i, true); // true for little-endian, assuming ESP32 uses little-endian
           dataArray.push(int16Value);
         }
-
-        // Convert the array to a JSON string for display and update service
-        const receivedText = JSON.stringify(dataArray);
-        this.bleDataService.updateReceivedText(receivedText);  // Update the shared service
-
-        console.log('Received int16 data array from ESP32:', dataArray);
+  
+        // Define the button signal sequence
+        const buttonSignal = [12610, 17232, 16984, 21838, 18762, 20559];
+  
+        // Check if the received data matches the button signal
+        if (dataArray.length === buttonSignal.length && dataArray.every((value, index) => value === buttonSignal[index])) {
+          this.sensorDataEmitter.emit('buttonSignal');
+        }
       });
-
-      console.log('Started receiving notifications from ESP32.');
+      console.log('Started listening for button press notifications');
     } catch (error) {
       console.error('Error starting notifications:', error);
     }
@@ -138,14 +151,14 @@ export class Tab1Page implements OnInit {
         console.error('Device not connected or recognized text is empty.');
         return;
       }
-
+  
       // Convert recognized text to DataView for BLE transmission
       const textArray = Array.from(this.recognizedText, (c) => c.charCodeAt(0));
       const dataView = numbersToDataView(textArray);
-
+  
       // Write the recognized text to the BLE characteristic
       await BleClient.write(this.deviceId, this.SERVICE_UUID, this.CHARACTERISTIC_UUID, dataView);
-
+  
       console.log('Sent recognized text:', this.recognizedText);
     } catch (error) {
       console.error('Error sending recognized text:', error);
@@ -174,6 +187,7 @@ export class Tab1Page implements OnInit {
   }
 
   async startListening() {
+    console.log('Button signal received! Starting to listen...');
     const hasPermission = await SpeechRecognition.checkPermissions();
     if (hasPermission.speechRecognition !== 'granted') {
       const permission = await SpeechRecognition.requestPermissions();
@@ -202,7 +216,7 @@ export class Tab1Page implements OnInit {
       console.log('partialResults was fired:', data.matches);
       if (data.matches && data.matches.length > 0) {
         this.recognizedText = data.matches[0];
-
+        this.sendRecognizedText(); // Send the recognized text via BLE
         console.log('Recognized text:', this.recognizedText);
       }
     });
