@@ -67,6 +67,13 @@ export class Tab1Page implements OnInit {
 
   
   // Function to connect to the Arduino BLE device
+  /**
+   * Connects to a Bluetooth device using the BleClient.
+   * 
+   * This method requests a Bluetooth device that provides the specified service UUID,
+   * connects to the selected device, and starts receiving notifications from it.
+   */
+
   async connectToDevice() {
     try {
       const device = await BleClient.requestDevice({
@@ -90,6 +97,14 @@ export class Tab1Page implements OnInit {
 
   
  
+  /**
+   * Disconnects from the currently connected BLE device.
+   * 
+   * This method attempts to disconnect from the BLE device identified by `this.deviceId`.
+   * If the disconnection is successful, it sets `this.isConnected` to `false` and logs
+   * a message indicating the device has been disconnected. If an error occurs during
+   */
+
   async disconnectDevice() {
     try {
       await BleClient.disconnect(this.deviceId);
@@ -99,6 +114,19 @@ export class Tab1Page implements OnInit {
       console.error('Error disconnecting from device:', error);
     }
   }
+
+
+
+
+  /**
+   * Starts receiving notifications from a BLE device and processes the incoming data.
+   * 
+   * This method initiates notifications from a BLE device using the specified service and characteristic UUIDs.
+   * It parses the incoming DataView to extract int16_t values and checks if the received data matches a predefined
+   * button signal sequence. If the data matches, it emits a 'buttonSignal' event.
+   * 
+   */
+
 
   async startReceivingNotifications() {
     try {
@@ -127,6 +155,8 @@ export class Tab1Page implements OnInit {
     }
   }
 
+
+
   // Function to process received data (optional)
   processReceivedData(dataArray: number[]) {
     // Here you can do something with the received data, e.g., update the UI
@@ -144,6 +174,18 @@ export class Tab1Page implements OnInit {
       console.error('Error stopping notifications:', error);
     }
   }
+
+
+
+  /**
+   * Sends the recognized text to a BLE device.
+   * 
+   * This method checks if the device is connected and if there is recognized text available.
+   * If both conditions are met, it converts the recognized text to a DataView and writes it
+   * to the specified BLE characteristic.
+   * 
+   */
+
 
   async sendRecognizedText() {
     try {
@@ -164,6 +206,14 @@ export class Tab1Page implements OnInit {
       console.error('Error sending recognized text:', error);
     }
   }
+
+  
+
+  /**
+   * Asynchronously converts the text of the current gesture to speech.
+   * 
+   */
+
 
   async speak() {
     await TextToSpeech.speak({
@@ -245,6 +295,16 @@ export class Tab1Page implements OnInit {
   }
 
   
+
+
+
+  /**
+   * Translates the current ASL gloss gesture to English using an AI model.
+   * 
+   * This function sends the current gesture to an AI model for translation and
+   * updates the `translate` property with the translated text. It logs the gesture,
+   * the API response, and the translated text for debugging purposes.
+   */
   async translateASLGloss() { // Function to translate ASL gloss to English
     console.log('Gesture to translate:', this.gesture); // Verify the gesture value
     const content = `Translate the following ASL gloss into English: ${this.gesture}. And do not add more than that. Remove quotation marks. Be simple and clear. Only give the translated text.`;
