@@ -1,7 +1,7 @@
 <ion-header mode="ios" translucent="true">
   <ion-toolbar>
     <ion-title>
-      <ion-icon name="hand-left" slot="start"></ion-icon> ASL Interpreter
+      ASL Interpreter
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -13,32 +13,44 @@
         <ion-card class="control-card">
           <ion-card-header class="control-card-header">
             <ion-card-title>Interpreter Glove</ion-card-title>
-            <ion-card-subtitle>Status: {{ isConnected ? 'Connected' : 'Disconnected' }} <span [class.connected]="isConnected" [class.disconnected]="!isConnected" class="led-indicator"></span></ion-card-subtitle>
+            <ion-card-subtitle>{{ isConnected ? 'Connected' : 'Disconnected' }} <span [class.connected]="isConnected" [class.disconnected]="!isConnected" class="led-indicator"></span></ion-card-subtitle>
           </ion-card-header>
+          <ion-row>
+            <ion-col size="6" class="button-col">
+              <ion-button expand="full" color="success" (click)="connectToDevice()" [disabled]="isConnected">
+                Connect
+              </ion-button>
+            </ion-col>
+            <ion-col size="6" class="button-col">
+              <ion-button expand="full" color="danger" (click)="disconnectDevice()" [disabled]="!isConnected">
+                Disconnect
+              </ion-button>
+            </ion-col>
+          </ion-row>
         </ion-card>
 
-        
-
-        
-      
+        <ion-card class="control-card">
+          <ion-card-header class="control-card-header">
+            <ion-card-title>Speech-to-Text Test</ion-card-title>
+            
+          </ion-card-header>
+          <ion-row>
+            
+              <ion-col size="6" class="button-col">
+                <ion-button id="start-left" class="animated-button start-button" (click)="startListening()">
+                  Start
+                </ion-button>
+            </ion-col>
+            <ion-col size="6" class="button-col">
+              <ion-button id="stop-right" class="animated-button stop-button" (click)="stopListening()">
+                Stop
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-card>
     
 
-  
-
-    <ion-row>
-      <ion-col size="6" class="button-col">
-        <ion-button id="start-left" class="animated-button start-button" (click)="startListening()">
-          Start
-        </ion-button>
-      </ion-col>
-      <ion-col size="6" class="button-col">
-        <ion-button id="stop-right" class="animated-button stop-button" (click)="stopListening()">
-          Stop
-        </ion-button>
-      </ion-col>
-    </ion-row>
-
-    <ion-button class="speak-button" (click)="speak()">Play Sentence</ion-button>
+    
 
     
    
@@ -85,6 +97,8 @@
   </ion-card>
 </ion-col>
 </ion-row>
+
+<ion-button class="speak-button" (click)="speak()">Play Sentence</ion-button>
 
 <!-- Recognized Text Card -->
 <ion-card class="interpreted-text-card">
