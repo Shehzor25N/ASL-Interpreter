@@ -120,20 +120,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Bluetooth Connection</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>Status: {{ isConnected ? 'Connected' : 'Disconnected' }}</p>
-      <ion-button expand="full" color="primary" (click)="connectToDevice()" [disabled]="isConnected">
-        Connect to InterpreterGlove
-      </ion-button>
-      <ion-button expand="full" color="danger" (click)="disconnectDevice()" [disabled]="!isConnected">
-        Disconnect
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  
 
 
 
@@ -174,17 +161,6 @@
     </ion-card-content>
   </ion-card>
   
-
-
-  <!-- Display any received text -->
-  <ion-card *ngIf="receivedText">
-    <ion-card-header>
-      <ion-card-title>Received Data</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>{{ receivedText }}</p>
-    </ion-card-content>
-  </ion-card>
 
 
 
