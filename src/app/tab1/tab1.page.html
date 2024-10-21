@@ -160,6 +160,21 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-card class="control-card">
+    <ion-card-header class="control-card-header">
+      <ion-card-title>Received Data</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div *ngIf="parsedReceivedData.length > 0">
+        <p *ngFor="let data of parsedReceivedData">{{ data }}</p>
+      </div>
+      <div *ngIf="parsedReceivedData.length === 0">
+        <p>No data received</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+  
+
 
   <!-- Display any received text -->
   <ion-card *ngIf="receivedText">

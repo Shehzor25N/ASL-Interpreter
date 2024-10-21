@@ -141,6 +141,9 @@ export class Tab1Page implements OnInit {
           dataArray.push(int16Value);
         }
   
+        // Store the parsed data in the component property
+        this.parsedReceivedData = dataArray;
+  
         // Define the button signal sequence
         const buttonSignal = [12610, 17232, 16984, 21838, 18762, 20559];
   
@@ -148,6 +151,9 @@ export class Tab1Page implements OnInit {
         if (dataArray.length === buttonSignal.length && dataArray.every((value, index) => value === buttonSignal[index])) {
           this.sensorDataEmitter.emit('buttonSignal');
         }
+  
+        // Trigger change detection to update the UI
+        this.cd.detectChanges();
       });
       console.log('Started listening for button press notifications');
     } catch (error) {
