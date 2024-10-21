@@ -14,6 +14,9 @@ ion-header {
   --ion-background-color: #222;
   --ion-text-color: #fff;
 
+  display: flex;
+  justify-content: center;
+
   .control-card {
     --background: #333;
     --color: #fff;
@@ -26,10 +29,12 @@ ion-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     ion-card-title {
       font-size: 18px;
       font-weight: bold;
     }
+
     ion-card-subtitle {
       display: flex;
       align-items: center;
@@ -41,15 +46,27 @@ ion-header {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: green;
     margin-left: 5px;
+  }
+
+  .connected {
+    background-color: green;
+  }
+
+  .disconnected {
+    background-color: red;
   }
 
   .button-col {
     display: flex;
     justify-content: center;
-    margin-top: -10px;
   }
+
+  .button-col {
+    display: flex;
+    justify-content: center;
+  }
+
 
   .animated-button {
     width: 100px;
@@ -75,7 +92,8 @@ ion-header {
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
-    height: 300px; /* Increased height */
+    height: 300px;
+    /* Increased height */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -91,7 +109,8 @@ ion-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px; /* Adjust height to center image */
+    height: 150px;
+    /* Adjust height to center image */
 
     .gesture-image {
       width: 150px;
@@ -194,5 +213,3 @@ ion-header {
   --background: #ccc;
   color: #000;
 }
-
-  

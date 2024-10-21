@@ -8,8 +8,7 @@ import { Capacitor } from '@capacitor/core';
 import Groq from 'groq-sdk';
 import { BleClient, numbersToDataView } from '@capacitor-community/bluetooth-le';
 import { BleDataService } from '../ble-data.service';  // Import the service
-import { EventEmitter } from 'events'; 
-
+import { EventEmitter } from 'events';
 
 @Component({
   selector: 'app-tab1',
@@ -48,7 +47,10 @@ export class Tab1Page implements OnInit {
     });
   }
 
-  // Set up an event listener for the button signal  
+  // Set up an event listener for the button signal
+  
+
+
   ngOnInit() {
     this.translateASLGloss();
     this.initializeBLE();
@@ -139,6 +141,9 @@ export class Tab1Page implements OnInit {
           dataArray.push(int16Value);
         }
   
+        // Store the parsed data in the component property
+        this.parsedReceivedData = dataArray;
+  
         // Define the button signal sequence
         const buttonSignal = [12610, 17232, 16984, 21838, 18762, 20559];
   
@@ -146,6 +151,9 @@ export class Tab1Page implements OnInit {
         if (dataArray.length === buttonSignal.length && dataArray.every((value, index) => value === buttonSignal[index])) {
           this.sensorDataEmitter.emit('buttonSignal');
         }
+  
+        // Trigger change detection to update the UI
+        this.cd.detectChanges();
       });
       console.log('Started listening for button press notifications');
     } catch (error) {
