@@ -8,7 +8,8 @@ import { Capacitor } from '@capacitor/core';
 import Groq from 'groq-sdk';
 import { BleClient, numbersToDataView } from '@capacitor-community/bluetooth-le';
 import { BleDataService } from '../ble-data.service';  // Import the service
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'events'; 
+
 
 @Component({
   selector: 'app-tab1',
@@ -47,10 +48,7 @@ export class Tab1Page implements OnInit {
     });
   }
 
-  // Set up an event listener for the button signal
-  
-
-
+  // Set up an event listener for the button signal  
   ngOnInit() {
     this.translateASLGloss();
     this.initializeBLE();
