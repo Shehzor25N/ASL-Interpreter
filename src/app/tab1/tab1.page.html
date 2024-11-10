@@ -63,10 +63,14 @@
     </ion-card-header>
     <ion-card-content>
       <div id="gesture-container" class="gesture-container">
-        <img [src]="getGestureImage(gesture)" alt="Gesture Image" class="gesture-image" />
+        <!-- Display the gesture text instead of an image -->
+        <span class="gesture-text">{{ predictedGesture }}</span>
       </div>
     </ion-card-content>
+    <ion-button class="speak-button" (click)="submitForm()">Show Prediction</ion-button>
   </ion-card>
+
+
 
   <ion-row>
     <ion-col>
@@ -99,7 +103,12 @@
     </ion-col>
   </ion-row>
 
-  <ion-button class="speak-button" (click)="speak()">Play Sentence</ion-button>
+  
+
+  <!-- This button is for testing the speech-to-text system -->
+  <!-- <ion-button class="speak-button" (click)="speak()">Play Sentence</ion-button> -->
+
+
 
   <!-- Recognized Text Card -->
   <ion-card class="interpreted-text-card">
@@ -132,7 +141,7 @@
     </ion-card-header>
     <ion-card-content>
       <!-- Display raw received data, or a placeholder if no data has been received yet -->
-      <p *ngIf="receivedText; else noData">{{ receivedText }}</p> <!-- Shows the raw received data -->
+      <p *ngIf="sensorData; else noData">{{ sensorData }}</p> <!-- Shows the raw received data -->
       <ng-template #noData>
         <p>No data received yet.</p>
       </ng-template>
@@ -147,20 +156,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card class="control-card">
-    <ion-card-header class="control-card-header">
-      <ion-card-title>Received Data</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div *ngIf="parsedReceivedData.length > 0">
-        <p *ngFor="let data of parsedReceivedData">{{ data }}</p>
-      </div>
-      <div *ngIf="parsedReceivedData.length === 0">
-        <p>No data received</p>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  
+
 
 
 

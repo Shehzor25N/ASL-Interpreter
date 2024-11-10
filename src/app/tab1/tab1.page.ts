@@ -9,24 +9,45 @@ import Groq from 'groq-sdk';
 import { BleClient, numbersToDataView } from '@capacitor-community/bluetooth-le';
 import { BleDataService } from '../ble-data.service';  // Import the service
 import { EventEmitter } from 'events';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonCardSubtitle, IonRow, IonGrid, IonCol, IonIcon, IonCardContent, IonButton, IonToast, IonCardHeader, IonCard, IonCardTitle, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent],
+  imports: [CommonModule, HttpClientModule, IonCardSubtitle, IonRow, IonGrid, IonCol, IonIcon, IonCardContent, IonButton, IonToast, IonCardHeader, IonCard, IonCardTitle, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent],
 })
 export class Tab1Page implements OnInit {
   gesture: string = ' RESEARCH PAPER, YOU LIKE WRITE? ';
   isListening: boolean = false;
   recognizedText: string = '';
-  isConnected: boolean = false; // Connection status
-  receivedText: string = ''; // Variable to hold the text received from Arduino
+  isConnected: boolean = false;
+  receivedText: string = '';
   translate: string = '';
-  parsedReceivedData: number[] = [];  // Store parsed uint16_t values
-
+  parsedReceivedData: number[] = [];
+  predictedGesture: string | null = null; // New variable for predicted gesture
+  predictionResult: string | null = null;
   
+  
+  // Note that the floating points are removed from the sensor data values, they are multiplied by 1000
+  
+  sensorData: number[] = [
+    56,   // flex_1
+    6,  // flex_2
+    6,   // flex_3
+    3,   // flex_4
+    5,   // flex_5
+    -1,   // GYRx
+    1,    // GYRy
+    0,    // GYRz
+    885,  // ACCx
+    205, // ACCy
+    330   // ACCz 
+  ];
+
+ 
   deviceId: string = ''; // Store the device ID after connecting
   SERVICE_UUID = '0000180d-0000-1000-8000-00805f9b34fb'; // Example: '0000180d-0000-1000-8000-00805f9b34fb'
   CHARACTERISTIC_UUID = '00002a37-0000-1000-8000-00805f9b34fb'; // Example: '00002a37-0000-1000-8000-00805f9b34fb'
@@ -35,10 +56,10 @@ export class Tab1Page implements OnInit {
 
   
   private groq: any;
-  private apiKey: string = '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'; // Replace with your actual API key
+  private apiKey: string = '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'; 
   private sensorDataEmitter = new EventEmitter();
 
-  constructor(private alertController: AlertController, private cd: ChangeDetectorRef, private bleDataService: BleDataService) {
+  constructor(private alertController: AlertController, private cd: ChangeDetectorRef, private bleDataService: BleDataService, private http: HttpClient) {
     SpeechRecognition.requestPermissions();
     this.groq = new Groq({ apiKey: this.apiKey, dangerouslyAllowBrowser: true });
 
@@ -143,9 +164,16 @@ export class Tab1Page implements OnInit {
   
         // Store the parsed data in the component property
         this.parsedReceivedData = dataArray;
+        this.submitForm();
+
+         // Update the sensorData with the new array
+      this.sensorData = dataArray;
+      console.log('Received data:', this.sensorData);
   
         // Define the button signal sequence
         const buttonSignal = [12610, 17232, 16984, 21838, 18762, 20559];
+        // Automatically submit the form with the parsed data
+        
   
         // Check if the received data matches the button signal
         if (dataArray.length === buttonSignal.length && dataArray.every((value, index) => value === buttonSignal[index])) {
@@ -161,6 +189,44 @@ export class Tab1Page implements OnInit {
     }
   }
 
+  submitForm() {
+    // API URL for the Flask backend
+    const apiUrl = 'http://100.101.248.5:5000/predict'; // Replace with your actual Flask API URL
+  
+    // Send the sensor data via POST request to Flask API
+    this.http.post(apiUrl, { data: this.sensorData }).subscribe(
+      (response: any) => {
+        // Update the prediction result with the returned value
+        this.predictionResult = response.prediction;
+        this.predictedGesture = this.predictionResult; // Update the predicted gesture
+        this.appendToGesture(this.predictionResult ?? ''); // Append the new word to the gesture
+        
+        console.log('Prediction Result:', this.predictionResult);
+      },
+      (error: unknown) => {
+        // Handle the error
+        console.error('Error:', error);
+        this.predictionResult = 'Error fetching prediction';
+      }
+    );
+  }
+  
+  appendToGesture(newWord: string) {
+    const words = this.gesture.split(' ');
+    const lastWord = words[words.length - 1];
+  
+    if (lastWord !== newWord) {
+      if (this.gesture) {
+        this.gesture += ' ' + newWord;
+      } else {
+        this.gesture = newWord;
+      }
+      this.speak(); // Make sound only if the new word is different
+      this.translateASLGloss(); // Translate the predicted gesture
+    }
+  }
+
+  
 
 
   // Function to process received data (optional)

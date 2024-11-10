@@ -9,6 +9,18 @@ ion-header {
   }
 }
 
+.gesture-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Adjust height as needed */
+}
+
+.gesture-text {
+  font-size: 60px; /* Adjust font size as needed */
+  font-weight: bold;
+}
+
 .asl-interpreter-content {
   --background: #222;
   --ion-background-color: #222;
