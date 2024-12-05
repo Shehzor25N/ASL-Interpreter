@@ -20,7 +20,7 @@ import { HttpClient } from '@angular/common/http';
   imports: [CommonModule, HttpClientModule, IonCardSubtitle, IonRow, IonGrid, IonCol, IonIcon, IonCardContent, IonButton, IonToast, IonCardHeader, IonCard, IonCardTitle, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent],
 })
 export class Tab1Page implements OnInit {
-  gesture: string = ' RESEARCH PAPER, YOU LIKE WRITE? ';
+  gesture: string = '';
   isListening: boolean = false;
   recognizedText: string = '';
   isConnected: boolean = false;
@@ -377,7 +377,13 @@ export class Tab1Page implements OnInit {
    * updates the `translate` property with the translated text. It logs the gesture,
    * the API response, and the translated text for debugging purposes.
    */
-  async translateASLGloss() { // Function to translate ASL gloss to English
+   async translateASLGloss() { // Function to translate ASL gloss to English
+    // Check if the gesture string is empty
+    if (this.gesture === '') {
+      console.log('Gesture is empty, skipping translation.');
+      return;
+    } else {
+  
     console.log('Gesture to translate:', this.gesture); // Verify the gesture value
     const content = `Translate the following ASL gloss into English: ${this.gesture}. And do not add more than that. Remove quotation marks. Be simple and clear. Only give the translated text.`;
     try {
@@ -398,5 +404,6 @@ export class Tab1Page implements OnInit {
       console.error('Error translating ASL gloss:', error); // Handle errors
     }
   }
+}
 
 }
